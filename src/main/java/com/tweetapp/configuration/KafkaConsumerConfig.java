@@ -23,6 +23,12 @@ import lombok.extern.slf4j.Slf4j;
 @Generated
 public class KafkaConsumerConfig {
 
+	
+	public static final String TWEET_APP = "tweet-app";
+	
+	@Value(value = "${kafka.message}")
+	public static final String MESSAGE = "message";
+	
 	@Value(value = "${kafka.serverConfig}")
 	private String serverConfig;
 
@@ -30,7 +36,7 @@ public class KafkaConsumerConfig {
 	public ConsumerFactory<String, String> consumerFactory() {
 		Map<String, Object> props = new HashMap<>();
 		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, serverConfig);
-		props.put(ConsumerConfig.GROUP_ID_CONFIG, "tweet-app");
+		props.put(ConsumerConfig.GROUP_ID_CONFIG, TWEET_APP);
 		props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 		return new DefaultKafkaConsumerFactory<>(props);
@@ -43,7 +49,7 @@ public class KafkaConsumerConfig {
 		return factory;
 	}
 
-	@KafkaListener(topics = "message", groupId = "tweet-app")
+	@KafkaListener(topics = MESSAGE, groupId = TWEET_APP)
 	public void listen(String message) {
 		log.info("Received Messasge in tweet-app " + message);
 	}
