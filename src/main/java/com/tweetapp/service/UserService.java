@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -37,6 +38,9 @@ public class UserService {
 
 	@Autowired
 	private KafkaTemplate<String, String> kafkaTemplate;
+
+	@Value(value = "${kafka.topicName}")
+	private String topicName;
 
 	public ResponseEntity<Envelope<String>> login(String userName, String password) throws TweetAppException {
 		log.info(TweetConstant.IN_REQUEST_LOG, "login", userName.concat(" " + password));
@@ -68,7 +72,7 @@ public class UserService {
 			throw new TweetAppException(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST,
 					TweetConstant.USER_NAME_NOT_PRESENT);
 		}
-		kafkaTemplate.send("message", "Forgot Password :: " + userName);
+		kafkaTemplate.send(topicName, "Forgot Password for :: " + userName.concat(" " + password));
 		Query query = new Query();
 		query.addCriteria(Criteria.where(TweetConstant.EMAIL_ID).is(userName));
 
