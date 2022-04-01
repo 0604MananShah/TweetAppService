@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -37,8 +38,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TweetService {
 
-	
-
 	@Autowired
 	TweetRepo tweetRepository;
 
@@ -47,6 +46,9 @@ public class TweetService {
 
 	@Autowired
 	UserRepo userRepository;
+
+	@Value(value = "${kafka.topicName}")
+	String topicName;
 
 	@Autowired
 	private KafkaTemplate<String, String> kafkaTemplate;
@@ -101,7 +103,7 @@ public class TweetService {
 		if (tweet == null)
 			throw new TweetAppException(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR,
 					"Error While Updating Tweet");
-		kafkaTemplate.send("message", "Updated Tweet:: " + userName);
+		kafkaTemplate.send(topicName, "Updated Tweet :: " + tweetRequest.toString().concat(" by ::" + userName));
 		log.info(TweetConstant.EXITING_RESPONSE_LOG, "updateTweet", tweet);
 		return ResponseEntity
 				.ok(new Envelope<String>(HttpStatus.OK.value(), HttpStatus.OK, TweetConstant.TWEET_UPDATED));
