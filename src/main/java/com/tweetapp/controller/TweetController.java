@@ -26,6 +26,7 @@ import com.tweetapp.request.TweetRequest;
 import com.tweetapp.service.TweetService;
 import com.tweetapp.util.Envelope;
 
+import io.micrometer.core.annotation.Timed;
 import lombok.Generated;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,6 +40,7 @@ public class TweetController {
 	TweetService tweetService;
 
 	@PostMapping("/add/{userName}")
+	@Timed(value = "postTweet.time", description = "Time taken to return postTweet")
 	public ResponseEntity<Envelope<String>> postTweet(@PathVariable("userName") String userName,
 			@RequestBody @Valid TweetRequest tweet) {
 		log.info("In {} UserName {} ", "postTweet", userName);
@@ -46,18 +48,21 @@ public class TweetController {
 	}
 
 	@GetMapping("/all")
+	@Timed(value = "all.time", description = "Time taken to return allTweet")
 	public ResponseEntity<Envelope<List<Tweet>>> getAllTweet() {
 		log.info("In {}", "getAllTweet");
 		return tweetService.getAllTweet();
 	}
 
 	@GetMapping("/{userName}")
+	@Timed(value = "getAllUserTweet.time", description = "Time taken to return getAllUserTweet")
 	public ResponseEntity<Envelope<List<Tweet>>> getAllUserTweet(@PathVariable String userName) {
 		log.info("In {} UserName {} ", "getAllUserTweet", userName);
 		return tweetService.getAllUserTweet(userName);
 	}
 
 	@PutMapping("/{userName}/update/{tweetId}")
+	@Timed(value = "updateTweet.time", description = "Time taken to return updateTweet")
 	public ResponseEntity<Envelope<String>> updateTweet(@PathVariable("userName") String userName,
 			@PathVariable("tweetId") int tweetId, @RequestBody @Valid TweetRequest tweetRequest) {
 		log.info("In {} UserName {} ", "updateTweet", userName);
@@ -65,6 +70,7 @@ public class TweetController {
 	}
 
 	@DeleteMapping("/{userName}/delete/{tweetId}")
+	@Timed(value = "deleteTweet.time", description = "Time taken to return deleteTweet")
 	public ResponseEntity<Envelope<String>> deleteTweet(@PathVariable("userName") String userName,
 			@PathVariable("tweetId") int tweetId) {
 		log.info("In {} UserName {} ", "deleteTweet", userName);
@@ -72,6 +78,7 @@ public class TweetController {
 	}
 
 	@PutMapping("/{userName}/like/{tweetId}")
+	@Timed(value = "likeTweet.time", description = "Time taken to return likeTweet")
 	public ResponseEntity<Envelope<String>> likeTweet(@PathVariable("userName") String userName,
 			@PathVariable("tweetId") int tweetId) {
 		log.info("In {} UserName {} ", "likeTweet", userName);
@@ -79,6 +86,7 @@ public class TweetController {
 	}
 
 	@PostMapping("/{userName}/reply/{tweetId}/{reply}")
+	@Timed(value = "replyTweet.time", description = "Time taken to return replyTweet")
 	public ResponseEntity<Envelope<String>> replyTweet(@PathVariable("userName") String userName,
 			@PathVariable("tweetId") int tweetId, @PathVariable("reply") String reply) {
 		log.info("In {} UserName {} ", "replyTweet", userName);

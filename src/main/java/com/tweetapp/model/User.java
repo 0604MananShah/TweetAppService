@@ -25,8 +25,10 @@ import lombok.ToString;
 @ToString
 @Document(collection = "USER")
 public class User {
+	
 	@Transient
 	public static final String SEQUENCE_NAME = "users_sequence";
+	
 	@Id
 	@Min(1)
 	public int userId;

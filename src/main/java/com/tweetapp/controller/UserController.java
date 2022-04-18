@@ -25,6 +25,7 @@ import com.tweetapp.model.User;
 import com.tweetapp.service.UserService;
 import com.tweetapp.util.Envelope;
 
+import io.micrometer.core.annotation.Timed;
 import lombok.Generated;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,12 +40,14 @@ public class UserController {
 
 	@PostMapping(value = "/register")
 	@ResponseBody
+	@Timed(value = "registerUser.time", description = "Time taken to return registerUser")
 	public ResponseEntity<Envelope<String>> registerUser(@RequestBody @Valid User user) {
 		log.info("Registration for user {} {}", user.getFirstName(), user.getLastName());
 		return userService.register(user);
 	}
 
 	@GetMapping(value = "/login")
+	@Timed(value = "login.time", description = "Time taken to return login")
 	public ResponseEntity<Envelope<String>> login(@RequestParam("emailId") String emailId,
 			@RequestParam("password") String password) throws TweetAppException {
 		log.info("Login for user {} {}", emailId, password);
@@ -52,6 +55,7 @@ public class UserController {
 	}
 
 	@GetMapping(value = "/forgot")
+	@Timed(value = "forgotPassword.time", description = "Time taken to return forgotPassword")
 	public ResponseEntity<Envelope<String>> forgotPassword(@RequestParam("userName") String userName,
 			@RequestParam("newPassword") String Password) {
 		log.info("forgot password for user {}", userName);
@@ -60,12 +64,14 @@ public class UserController {
 	}
 
 	@GetMapping(value = "/users")
+	@Timed(value = "users.time", description = "Time taken to return users")
 	public ResponseEntity<Envelope<List<User>>> users() {
 		log.info("Get All Users");
 		return userService.getAllusers();
 	}
 
 	@GetMapping(value = "/users/search")
+	@Timed(value = "searchUserName.time", description = "Time taken to return searchUserName")
 	public ResponseEntity<Envelope<String>> searchUserName(@RequestParam("userName") String userName) {
 		log.info("Search UserName {}", userName);
 		return userService.username(userName);

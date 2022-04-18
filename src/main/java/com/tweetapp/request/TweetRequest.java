@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * @author 896953
@@ -23,6 +24,7 @@ import lombok.Setter;
 @Component
 @Getter
 @Setter
+@ToString
 public class TweetRequest {
 	@Id
 	@Min(1)

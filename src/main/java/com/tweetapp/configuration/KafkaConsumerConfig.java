@@ -22,11 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Generated
 public class KafkaConsumerConfig {
-
 	
 	public static final String TWEET_APP = "tweet-app";
 	
-	@Value(value = "${kafka.message}")
+//	@Value(value = "${kafka.message}")
 	public static final String MESSAGE = "message";
 	
 	@Value(value = "${kafka.serverConfig}")
