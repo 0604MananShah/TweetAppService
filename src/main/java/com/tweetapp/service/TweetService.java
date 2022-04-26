@@ -47,7 +47,7 @@ public class TweetService {
 	@Autowired
 	UserRepo userRepository;
 
-	@Value(value = "${kafka.topicName}")
+//	@Value(value = "${kafka.topicName}")
 	String topicName;
 
 	@Autowired
@@ -103,7 +103,7 @@ public class TweetService {
 		if (tweet == null)
 			throw new TweetAppException(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR,
 					"Error While Updating Tweet");
-		kafkaTemplate.send(topicName, "Updated Tweet :: " + tweetRequest.toString().concat(" by ::" + userName));
+		kafkaTemplate.send(TweetConstant.TOPIC_NAME, "Updated Tweet :: " + tweetRequest.toString().concat(" by ::" + userName));
 		log.info(TweetConstant.EXITING_RESPONSE_LOG, "updateTweet", tweet);
 		return ResponseEntity
 				.ok(new Envelope<String>(HttpStatus.OK.value(), HttpStatus.OK, TweetConstant.TWEET_UPDATED));

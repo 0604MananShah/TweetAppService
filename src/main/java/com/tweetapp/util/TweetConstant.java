@@ -33,5 +33,7 @@ public class TweetConstant {
 	public static final String TWEET = "tweet";
 	public static final String EXITING_RESPONSE_LOG = "Exiting {} Response -> {}";
 	public static final String IN_REQUEST_LOG = "In {} Request-> {} ";
+	public static final String TOPIC_NAME = "message";
+	public static final String GROUP_ID = " ";
 
 }

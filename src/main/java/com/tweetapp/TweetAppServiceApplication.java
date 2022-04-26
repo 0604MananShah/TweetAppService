@@ -15,7 +15,7 @@ import lombok.Generated;
 @EnableMongoRepositories
 @Generated
 @EnableAspectJAutoProxy
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:4200")
 public class TweetAppServiceApplication {
 
 	public static void main(String[] args) {
