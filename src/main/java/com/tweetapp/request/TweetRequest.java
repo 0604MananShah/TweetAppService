@@ -12,7 +12,6 @@ import javax.validation.constraints.NotBlank;
 import org.springframework.data.annotation.Id;
 import org.springframework.stereotype.Component;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -27,7 +26,6 @@ import lombok.ToString;
 @ToString
 public class TweetRequest {
 	@Id
-	@Min(1)
 	private int tweetId;
 	@NotBlank(message = "userName cannot be Null")
 	private String userName;

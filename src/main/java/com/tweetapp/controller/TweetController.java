@@ -35,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Slf4j
 @Generated
+@CrossOrigin(origins = "${client.url}")
 public class TweetController {
 
 	@Autowired
@@ -49,7 +50,6 @@ public class TweetController {
 	}
 
 	@GetMapping("/all")
-	@CrossOrigin(origins = "http://localhost:4200")
 	@Timed(value = "all.time", description = "Time taken to return allTweet")
 	public ResponseEntity<Envelope<List<Tweet>>> getAllTweet() {
 		log.info("In {}", "getAllTweet");

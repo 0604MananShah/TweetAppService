@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -55,14 +54,13 @@ public class TweetService {
 
 	public ResponseEntity<Envelope<String>> postTweet(String userName, TweetRequest tweetRequest) {
 		log.info(TweetConstant.IN_REQUEST_LOG, "postTweet", tweetRequest);
-		Optional<Tweet> findById = tweetRepository.findById(tweetRequest.getTweetId());
 		Optional<User> findByEmailIdName = userRepository.findByEmailIdName(userName);
+		long count = tweetRepository.count();
+		log.info("total tweets " + count);
 		if (findByEmailIdName.isEmpty())
 			throw new TweetAppException(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST,
 					TweetConstant.USER_NAME_NOT_PRESENT);
-		if (findById.isPresent())
-			throw new TweetAppException(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST,
-					TweetConstant.TWEET_ALREADY_PRESENT);
+		tweetRequest.setTweetId((int) count + 1);
 		Tweet tweet = new Tweet(tweetRequest.getTweetId(), tweetRequest.getUserName(), tweetRequest.getTweet(),
 				new Date(System.currentTimeMillis()), null, null);
 		tweetRepository.save(tweet);
@@ -96,14 +94,15 @@ public class TweetService {
 		Tweet tweet = new Tweet(tweetRequest.getTweetId(), tweetRequest.getUserName(), tweetRequest.getTweet(),
 				new Date(System.currentTimeMillis()), null, null);
 		Query query = new Query();
-		query.addCriteria(Criteria.where(TweetConstant.TWEET_ID).is(tweetId));
+		query.addCriteria(Criteria.where(TweetConstant.EMAIL_ID).is(tweetRequest.getUserName()));
 		Update update = new Update();
 		update.set(TweetConstant.TWEET, tweet.getTweet());
 		tweet = mongoOperations.findAndModify(query, update, Tweet.class);
 		if (tweet == null)
 			throw new TweetAppException(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR,
 					"Error While Updating Tweet");
-		kafkaTemplate.send(TweetConstant.TOPIC_NAME, "Updated Tweet :: " + tweetRequest.toString().concat(" by ::" + userName));
+		kafkaTemplate.send(TweetConstant.TOPIC_NAME,
+				"Updated Tweet :: " + tweetRequest.toString().concat(" by ::" + userName));
 		log.info(TweetConstant.EXITING_RESPONSE_LOG, "updateTweet", tweet);
 		return ResponseEntity
 				.ok(new Envelope<String>(HttpStatus.OK.value(), HttpStatus.OK, TweetConstant.TWEET_UPDATED));

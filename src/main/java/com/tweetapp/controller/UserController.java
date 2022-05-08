@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.tweetapp.exception.TweetAppException;
@@ -34,13 +33,13 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @Slf4j
 @Generated
+@CrossOrigin(origins = "${client.url}")
 public class UserController {
 
 	@Autowired
 	UserService userService;
 
 	@PostMapping(value = "/register")
-	@ResponseBody
 	@Timed(value = "registerUser.time", description = "Time taken to return registerUser")
 	public ResponseEntity<Envelope<String>> registerUser(@RequestBody @Valid User user) {
 		log.info("Registration for user {} {}", user.getFirstName(), user.getLastName());
@@ -48,7 +47,7 @@ public class UserController {
 	}
 
 	@GetMapping(value = "/login")
-	@Timed(value = "login.time", description = "Time taken to return login")
+	@Timed(value = "loginUser.time", description = "Time taken to return login")
 	public ResponseEntity<Envelope<String>> login(@RequestParam("emailId") String emailId,
 			@RequestParam("password") String password) throws TweetAppException {
 		log.info("Login for user {} {}", emailId, password);
@@ -65,7 +64,6 @@ public class UserController {
 	}
 
 	@GetMapping(value = "/users")
-	@CrossOrigin(origins = "http://localhost:4200")
 	@Timed(value = "users.time", description = "Time taken to return users")
 	public ResponseEntity<Envelope<List<User>>> users() {
 		log.info("Get All Users");
