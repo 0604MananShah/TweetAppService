@@ -12,8 +12,8 @@ services:
       - kafka_network
   
   tweetAppService:
-    image: tweetAppService
-    container_name: tweetAppService
+    image: tweet-app-service
+    container_name: tweet-app-service
     ports:
       - '5000:5000'
     networks: 
@@ -22,14 +22,14 @@ services:
       - mongo
       
   tweetapp-frontend:
-    image: tweetAppAngular
-    container_name: tweetAppAngular
+    image: tweet-app-angular
+    container_name: tweet-app-angular
     ports:
       - '4200:4200'
     networks: 
       - kafka_network
     depends_on:
-      - tweetAppService       
+      - tweet-app-service       
   
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -56,5 +56,3 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      
-      
