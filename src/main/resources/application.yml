@@ -17,7 +17,7 @@ spring:
       
 logging:
   file:
-    path: C:/elk
+    path: /logs
   level:
     org.springframework.web: ERROR
     com.howtodoinjava: DEBUG

@@ -93,16 +93,18 @@ public class TweetService {
 		tweetAndUserValidation(userName, tweetId);
 		Tweet tweet = new Tweet(tweetRequest.getTweetId(), tweetRequest.getUserName(), tweetRequest.getTweet(),
 				new Date(System.currentTimeMillis()), null, null);
+		log.info("tweet 1" + tweet);
 		Query query = new Query();
-		query.addCriteria(Criteria.where(TweetConstant.EMAIL_ID).is(tweetRequest.getUserName()));
+		query.addCriteria(Criteria.where("userName").is(tweetRequest.getUserName()));
 		Update update = new Update();
 		update.set(TweetConstant.TWEET, tweet.getTweet());
 		tweet = mongoOperations.findAndModify(query, update, Tweet.class);
+		log.info("tweet " + tweet);
 		if (tweet == null)
 			throw new TweetAppException(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR,
 					"Error While Updating Tweet");
-		kafkaTemplate.send(TweetConstant.TOPIC_NAME,
-				"Updated Tweet :: " + tweetRequest.toString().concat(" by ::" + userName));
+//		kafkaTemplate.send(TweetConstant.TOPIC_NAME,
+//				"Updated Tweet :: " + tweetRequest.toString().concat(" by ::" + userName));
 		log.info(TweetConstant.EXITING_RESPONSE_LOG, "updateTweet", tweet);
 		return ResponseEntity
 				.ok(new Envelope<String>(HttpStatus.OK.value(), HttpStatus.OK, TweetConstant.TWEET_UPDATED));
