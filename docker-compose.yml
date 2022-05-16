@@ -1,19 +1,82 @@
-version: '3'
-networks:
-  kafka_network:
-    name: tweet_app_docker
-  elk:
-    driver: bridge
-    
+version: '3.6'
+
 services:
+
+  prometheus:
+    image: prom/prometheus:v2.21.0
+    container_name: prometheus
+    ports:
+      - 9000:9090
+    volumes:
+      - ./prometheus:/etc/prometheus
+      - prometheus-data:/prometheus
+    command: 
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    
+  # grafana:
+    # image: grafana/grafana:6.7.2
+    # container_name: grafana
+    # volumes:
+      # - grafana_data:/var/lib/grafana
+      # - ./grafana:/etc/grafana
+    # ports:
+      # - 3000:3000
+
+  Elasticsearch:
+    image: elasticsearch:7.17.3
+    container_name: elasticsearch
+    restart: always
+    volumes:
+    - elastic_data:/usr/share/elasticsearch/data/
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      discovery.type: single-node    
+    ports:
+    - '9200:9200'
+    - '9300:9300'
+    networks:
+      - elk
+
+  Logstash:
+    image: logstash:7.17.0
+    container_name: logstash
+    restart: always
+    volumes:
+    - ./config:/logstash
+    command: logstash -f /logstash/logstash.conf 
+    depends_on:
+      - Elasticsearch
+    ports:
+    - '9600:9600'
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"    
+    networks:
+      - elk
+
+  Kibana:
+    image: kibana:7.17.3
+    container_name: kibana
+    restart: always       
+    ports:
+    - '5601:5601'
+    environment:
+      - ELASTICSEARCH_URL=http://localhost:9200  
+    depends_on:
+      - Elasticsearch  
+    networks:
+      - elk
+
   zookeeper:
     image: wurstmeister/zookeeper
-    container_name: zookeeper
     ports:
     - "2181:2181"
   kafka:
     image: wurstmeister/kafka
-    container_name: kafka
     ports:
     - "9092:9092"
     environment:
@@ -21,8 +84,31 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
       KAFKA_CREATE_TOPICS: "message"
+  
+  tweetAppService:
+    image: themananshah/tweet-app-service
+    container_name: tweet-app-service
+    ports:
+      - '8080:8080'
+    networks: 
+      - kafka_network
+      
+  tweetAppAngular:
+    image: themananshah/tweet-app-angular
+    container_name: tweet-app-angular
+    ports:
+      - '4200:4200'
+    networks: 
+      - kafka_network
+    depends_on:
+      - tweetAppService   
      
 volumes:
   prometheus-data:
-  esdata1:
-    driver: local
+  elastic_data:
+  grafana_data:
+  
+networks:
+  kafka_network:
+    name: tweet_network_kafka_docker
+  elk:
