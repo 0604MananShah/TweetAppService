@@ -1,103 +1,24 @@
-version: '2'
+version: '3'
 networks:
   kafka_network:
-    name: tweet_network_kafka_docker
+    name: tweet_app_docker
   elk:
     driver: bridge
     
 services:
-  tweetAppService:
-    image: themananshah/tweet-app-service
-    container_name: tweet-app-service
+  zookeeper:
+    image: wurstmeister/zookeeper
     ports:
-      - '8080:8080'
-    networks: 
-      - kafka_network
-      
-  tweetAppAngular:
-    image: themananshah/tweet-app-angular
-    container_name: tweet-app-angular
+    - "2181:2181"
+  kafka:
+    image: wurstmeister/kafka
     ports:
-      - '4200:4200'
-    networks: 
-      - kafka_network
-    depends_on:
-      - tweetAppService   
-      
-  prometheus:
-    image: prom/prometheus:v2.30.3
-    ports:
-      - 9000:9090
-    volumes:
-      - ./prometheus:/src/main/resources
-      - prometheus-data:/prometheus
-    command: --web.enable-lifecycle  --config.file=/etc/prometheus/prometheus.yml    
-  
-#  zookeeper:
-#    image: confluentinc/cp-zookeeper:7.1.1
-#    hostname: zookeeper
-#    container_name: zookeeper
-#    ports:
-#      - "2181:2181"
-#    environment:
-#      ZOOKEEPER_CLIENT_PORT: 2181
-#      ZOOKEEPER_TICK_TIME: 2000
-#      
-#  broker:
-#    image: confluentinc/cp-server:7.1.1
-#    hostname: broker
-#    container_name: broker
-#    depends_on:
-#      - zookeeper
-#    ports:
-#      - "9092:9092"
-#      - "9101:9101"
-#    environment:
-#      KAFKA_BROKER_ID: 1
-#      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-#      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker:29092,PLAINTEXT_HOST://localhost:9092
-#      KAFKA_METRIC_REPORTERS: io.confluent.metrics.reporter.ConfluentMetricsReporter
-#      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-#      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-#      KAFKA_CONFLUENT_LICENSE_TOPIC_REPLICATION_FACTOR: 1
-#      KAFKA_CONFLUENT_BALANCER_TOPIC_REPLICATION_FACTOR: 1
-#      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-#      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-#      KAFKA_JMX_PORT: 9101
-#      KAFKA_JMX_HOSTNAME: localhost
-#      KAFKA_CONFLUENT_SCHEMA_REGISTRY_URL: http://schema-registry:8081
-#      CONFLUENT_METRICS_REPORTER_BOOTSTRAP_SERVERS: broker:29092
-#      CONFLUENT_METRICS_REPORTER_TOPIC_REPLICAS: 1
-#      CONFLUENT_METRICS_ENABLE: 'true'
-#      CONFLUENT_SUPPORT_CUSTOMER_ID: 'anonymous'
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.2.0
-    ports:
-      - "9200:9200"
+    - "9092:9092"
     environment:
-      - "discovery.type=single-node"
-    volumes:
-      - ./elasticsearch/data:/usr/share/elasticsearch/data:rw              # Persistence data
-
-  logstash:
-    image: docker.elastic.co/logstash/logstash:7.2.0
-    ports:
-      - "25826:25826"
-      - "5044:5044"
-    volumes:
-      - ./src/main/resources:/usr/share/logstash/pipeline:ro                # Pipeline configuration
-    restart: on-failure
-    depends_on:
-      - elasticsearch
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.2.0
-    ports:
-      - "5601:5601"
-    restart: on-failure
-    depends_on:
-      - elasticsearch
+      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'false'
+      KAFKA_CREATE_TOPICS: "message"
      
 volumes:
   prometheus-data:
