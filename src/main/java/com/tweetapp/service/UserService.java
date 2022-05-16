@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -96,16 +95,14 @@ public class UserService {
 		return ResponseEntity.ok(new Envelope<>(HttpStatus.OK.value(), HttpStatus.OK, findAll));
 	}
 
-	public ResponseEntity<Envelope<String>> username(String userName) {
+	public ResponseEntity<Envelope<User>> username(String userName) {
 		log.info(TweetConstant.IN_REQUEST_LOG, "username", userName);
 		Optional<User> userPresent = userRepository.findByEmailIdName(userName);
-		String isUserpresent = userPresent.isPresent() ? TweetConstant.USER_PRESENT_IN_DATABASE
-				: TweetConstant.USER_NAME_NOT_PRESENT;
-		log.debug(isUserpresent);
+		log.debug("{}",userPresent);
 		if (userPresent.isEmpty())
-			throw new TweetAppException(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, isUserpresent);
-		log.info(TweetConstant.EXITING_RESPONSE_LOG, "username", isUserpresent);
-		return ResponseEntity.ok(new Envelope<>(HttpStatus.OK.value(), HttpStatus.OK, userName + isUserpresent));
+			throw new TweetAppException(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, userPresent.toString());
+		log.info(TweetConstant.EXITING_RESPONSE_LOG, "username", userPresent.isPresent()?"Present": "Not Present");
+		return ResponseEntity.ok(new Envelope(HttpStatus.OK.value(), HttpStatus.OK,userPresent));
 	}
 
 }
