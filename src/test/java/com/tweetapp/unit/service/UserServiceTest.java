@@ -135,7 +135,7 @@ class UserServiceTest {
 	@Test
 	void usernameTest() {
 		Mockito.when(userRepository.findByEmailIdName("manan.shah403@gmail.com")).thenReturn(Optional.of(new User()));
-		ResponseEntity<Envelope<String>> usernameResponse = userService.username("manan.shah403@gmail.com");
+		ResponseEntity<Envelope<User>> usernameResponse = userService.username("manan.shah403@gmail.com");
 		Assertions.assertEquals(ResponseEntity.ok(new Envelope<>(HttpStatus.OK.value(), HttpStatus.OK,
 				"manan.shah403@gmail.com" + " User present in Database")), usernameResponse);
 	}
