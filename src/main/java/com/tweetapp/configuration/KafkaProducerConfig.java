@@ -15,9 +15,9 @@ public class KafkaProducerConfig {
 	@Autowired
 	private KafkaTemplate<String, String> kafkaTemplate;
 
-	public void sendMessage(String message) 
-    {
-    	log.info(String.format("Message sent -> %s", message));
-        this.kafkaTemplate.send(TweetConstant.TOPIC_NAME, message);
-    }
+	public void sendMessage(String message) {
+		log.info(String.format("Message sent -> %s", message));
+		this.kafkaTemplate.send(TweetConstant.TOPIC_NAME, message);
+	}
+
 }

@@ -72,7 +72,7 @@ public class UserController {
 
 	@GetMapping(value = "/users/search")
 	@Timed(value = "searchUserName.time", description = "Time taken to return searchUserName")
-	public ResponseEntity<Envelope<String>> searchUserName(@RequestParam("userName") String userName) {
+	public ResponseEntity<Envelope<User>> searchUserName(@RequestParam("userName") String userName) {
 		log.info("Search UserName {}", userName);
 		return userService.username(userName);
 	}
