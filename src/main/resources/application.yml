@@ -3,6 +3,8 @@ spring:
       mongodb:
         uri: mongodb+srv://mananshah:manan123@cluster0.iqwu6.mongodb.net/test
         database: tweetapp
+  application:
+    name: TweetAppService
   kafka:
     consumer:
       bootstrap-servers: localhost:9092
@@ -14,14 +16,14 @@ spring:
       bootstrap-servers: localhost:9092
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      batch-size: 100000
       
 logging:
   file:
-    path: /logs
+    path: './config/logs'
+    name: ${logging.file.path}/my-app.log
   level:
     org.springframework.web: ERROR
-    com.howtodoinjava: DEBUG
-    org.hibernate: ERROR
 management:
   endpoints:
     web:

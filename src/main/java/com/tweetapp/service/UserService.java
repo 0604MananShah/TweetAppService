@@ -41,8 +41,8 @@ public class UserService {
 	public ResponseEntity<Envelope<String>> login(String userName, String password) throws TweetAppException {
 		log.info(TweetConstant.IN_REQUEST_LOG, "login", userName.concat(" " + password));
 		Optional<User> isValid = userRepository.findByemailIdAndPassword(userName, password);
-		String userValid = isValid.isEmpty() ? TweetConstant.LOGIN_FAILED : TweetConstant.LOGIN_SUCCESS;
-		if (isValid.isEmpty())
+		String userValid = isValid.isPresent() ? TweetConstant.LOGIN_SUCCESS : TweetConstant.LOGIN_FAILED;
+		if (!isValid.isPresent())
 			throw new TweetAppException(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, userValid);
 		log.info(TweetConstant.EXITING_RESPONSE_LOG, "login", userValid);
 		return ResponseEntity.ok(new Envelope<String>(HttpStatus.OK.value(), HttpStatus.OK, userValid));
@@ -64,7 +64,7 @@ public class UserService {
 	public ResponseEntity<Envelope<String>> forgotPassword(String userName, String password) {
 		log.info(TweetConstant.IN_REQUEST_LOG, "forgotPassword", userName.concat(" " + password));
 		Optional<User> findByEmailIdName = userRepository.findByEmailIdName(userName);
-		if (findByEmailIdName.isEmpty()) {
+		if (!findByEmailIdName.isPresent()) {
 			throw new TweetAppException(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST,
 					TweetConstant.USER_NAME_NOT_PRESENT);
 		}
@@ -98,11 +98,11 @@ public class UserService {
 	public ResponseEntity<Envelope<User>> username(String userName) {
 		log.info(TweetConstant.IN_REQUEST_LOG, "username", userName);
 		Optional<User> userPresent = userRepository.findByEmailIdName(userName);
-		log.debug("{}",userPresent);
-		if (userPresent.isEmpty())
+		log.debug("{}", userPresent);
+		if (!userPresent.isPresent())
 			throw new TweetAppException(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, userPresent.toString());
-		log.info(TweetConstant.EXITING_RESPONSE_LOG, "username", userPresent.isPresent()?"Present": "Not Present");
-		return ResponseEntity.ok(new Envelope(HttpStatus.OK.value(), HttpStatus.OK,userPresent));
+		log.info(TweetConstant.EXITING_RESPONSE_LOG, "username", userPresent.isPresent() ? "Present" : "Not Present");
+		return ResponseEntity.ok(new Envelope(HttpStatus.OK.value(), HttpStatus.OK, userPresent));
 	}
 
 }

@@ -19,7 +19,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import com.tweetapp.configuration.KafkaProducerConfig;
@@ -55,7 +54,7 @@ public class TweetService {
 		Optional<User> findByEmailIdName = userRepository.findByEmailIdName(userName);
 		long count = tweetRepository.count();
 		log.info("total tweets " + count);
-		if (findByEmailIdName.isEmpty())
+		if (!findByEmailIdName.isPresent())
 			throw new TweetAppException(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST,
 					TweetConstant.USER_NAME_NOT_PRESENT);
 		tweetRequest.setTweetId((int) count + 1);
@@ -177,11 +176,11 @@ public class TweetService {
 		log.info(TweetConstant.IN_REQUEST_LOG, "tweetAndUserValidation :: Validating User", userName);
 		Optional<Tweet> findById = tweetRepository.findById(tweetId);
 		Optional<User> findByEmailIdName = userRepository.findByEmailIdName(userName);
-		if (findByEmailIdName.isEmpty())
+		if (!findByEmailIdName.isPresent())
 			throw new TweetAppException(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST,
 					TweetConstant.USER_NAME_NOT_PRESENT);
 		log.info(TweetConstant.IN_REQUEST_LOG, "tweetAndUserValidation :: Validating Tweet", tweetId);
-		if (findById.isEmpty())
+		if (!findById.isPresent())
 			throw new TweetAppException(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR,
 					TweetConstant.NO_TWEETS_FOUND);
 		log.info(TweetConstant.EXITING_RESPONSE_LOG, "tweetAndUserValidation", "User And Tweet Validated");
