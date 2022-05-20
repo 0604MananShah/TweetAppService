@@ -21,7 +21,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.tweetapp.configuration.KafkaProducerConfig;
 import com.tweetapp.exception.TweetAppException;
 import com.tweetapp.model.Tweet;
 import com.tweetapp.model.User;
@@ -45,9 +44,6 @@ public class TweetService {
 
 	@Autowired
 	UserRepo userRepository;
-
-	@Autowired
-	private KafkaProducerConfig producer;
 
 	public ResponseEntity<Envelope<String>> postTweet(String userName, TweetRequest tweetRequest) {
 		log.info(TweetConstant.IN_REQUEST_LOG, "postTweet", tweetRequest);
@@ -98,7 +94,6 @@ public class TweetService {
 		if (tweet == null)
 			throw new TweetAppException(HttpStatus.INTERNAL_SERVER_ERROR.value(), HttpStatus.INTERNAL_SERVER_ERROR,
 					"Error While Updating Tweet");
-		producer.sendMessage("Updated Tweet :: " + tweet.toString().concat(" by ::" + userName));
 		log.info(TweetConstant.EXITING_RESPONSE_LOG, "updateTweet", tweet);
 		return ResponseEntity
 				.ok(new Envelope<String>(HttpStatus.OK.value(), HttpStatus.OK, TweetConstant.TWEET_UPDATED));
