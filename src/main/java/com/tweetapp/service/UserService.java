@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.tweetapp.configuration.KafkaProducerConfig;
 import com.tweetapp.exception.TweetAppException;
 import com.tweetapp.model.User;
 import com.tweetapp.repo.UserRepo;
@@ -33,6 +34,9 @@ public class UserService {
 
 	@Autowired
 	MongoOperations mongoperation;
+
+	@Autowired
+	private KafkaProducerConfig producer;
 
 	public ResponseEntity<Envelope<String>> login(String userName, String password) throws TweetAppException {
 		log.info(TweetConstant.IN_REQUEST_LOG, "login", userName.concat(" " + password));
@@ -64,6 +68,7 @@ public class UserService {
 			throw new TweetAppException(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST,
 					TweetConstant.USER_NAME_NOT_PRESENT);
 		}
+		producer.sendMessage("Forgot Password for :: " + userName.concat(" " + password));
 		Query query = new Query();
 		query.addCriteria(Criteria.where(TweetConstant.EMAIL_ID).is(userName));
 
