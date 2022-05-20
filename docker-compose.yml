@@ -18,57 +18,57 @@ services:
       - '--storage.tsdb.retention.time=200h'
       - '--web.enable-lifecycle'
     
-  grafana:
-    image: grafana/grafana:6.7.2
-    container_name: grafana
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./config/grafana:/grafana/grafana-enterprise
-    ports:
-      - 3000:3000
+  # grafana:
+    # image: grafana/grafana:6.7.2
+    # container_name: grafana
+    # volumes:
+      # - grafana_data:/var/lib/grafana
+      # - ./config/grafana:/grafana/grafana-enterprise
+    # ports:
+      # - 3000:3000
 
-  Elasticsearch:
-    image: elasticsearch:7.17.3
-    container_name: elasticsearch
-    restart: always
-    volumes:
-    - elastic_data:/usr/share/elasticsearch/data/
-    environment:
-      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
-      discovery.type: single-node    
-    ports:
-    - '9200:9200'
-    networks:
-      - elk
+  # Elasticsearch:
+    # image: elasticsearch:7.17.3
+    # container_name: elasticsearch
+    # restart: always
+    # volumes:
+    # - elastic_data:/usr/share/elasticsearch/data/
+    # environment:
+      # ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+      # discovery.type: single-node    
+    # ports:
+    # - '9200:9200'
+    # networks:
+      # - elk
 
-  Logstash:
-    image: logstash:7.17.0
-    container_name: logstash
-    restart: always
-    volumes:
-    - ./config :/logstash
-    command: logstash -f /logstash/logstash.conf 
-    depends_on:
-      - Elasticsearch
-    ports:
-    - '9600:9600'
-    environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"    
-    networks:
-      - elk
+  # Logstash:
+    # image: logstash:7.17.0
+    # container_name: logstash
+    # restart: always
+    # volumes:
+    # - ./config :/logstash
+    # command: logstash -f /logstash/logstash.conf 
+    # depends_on:
+      # - Elasticsearch
+    # ports:
+    # - '9600:9600'
+    # environment:
+      # LS_JAVA_OPTS: "-Xmx256m -Xms256m"    
+    # networks:
+      # - elk
 
-  Kibana:
-    image: kibana:7.17.3
-    container_name: kibana
-    restart: always       
-    ports:
-    - '5601:5601'
-    environment:
-      - ELASTICSEARCH_URL=http://localhost:9200  
-    depends_on:
-      - Elasticsearch  
-    networks:
-      - elk
+  # Kibana:
+    # image: kibana:7.17.3
+    # container_name: kibana
+    # restart: always       
+    # ports:
+    # - '5601:5601'
+    # environment:
+      # - ELASTICSEARCH_URL=http://localhost:9200  
+    # depends_on:
+      # - Elasticsearch  
+    # networks:
+      # - elk
 
   zookeeper:
     image: wurstmeister/zookeeper
@@ -96,19 +96,19 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
       # KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
       
-  tweetAppAngular:
-    image: themananshah/tweet-app-angular
-    container_name: tweet-app-angular
-    ports:
-      - '4200:4200'  
+  # tweetAppAngular:
+    # image: themananshah/tweet-app-angular
+    # container_name: tweet-app-angular
+    # ports:
+      # - '4200:4200'  
      
 volumes:
   prometheus-data:
-  elastic_data:
-  grafana_data:
+  # elastic_data:
+  # grafana_data:
   
 networks:
   kafka_network:
     driver: bridge
     name: tweet_network_kafka_docker
-  elk:
+  # elk:
