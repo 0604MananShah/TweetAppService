@@ -1,6 +1,5 @@
 # Tweet Service
 ## _Rest API_
-
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://github.com/0604MananShah/TweetAppService)
 
 Tweet App Service is Rest Api developed with Springboot. Consist of multiple Api. Will be implemented for UI with Angular.
@@ -11,6 +10,8 @@ Tweet App Service is Rest Api developed with Springboot. Consist of multiple Api
 - LogStach
 - Kafka
 - SpringValidation
+
+[check Blog for more info](https://themananshah.hashnode.dev/tweetapp)
 
 ## Features
 >- The valid user can log in into the API and post the tweet, reply and like.
@@ -94,5 +95,3 @@ curl --location --request GET 'http://localhost:8080/api/v1.0/tweets/{{emailId}}
 ```sh
 curl --location --request GET 'http://localhost:8080/v2/api-docs'
 ```
-
-
