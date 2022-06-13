@@ -11,7 +11,7 @@ Tweet App Service is Rest Api developed with Springboot. Consist of multiple Api
 - Kafka
 - SpringValidation
 
-[check Blog for more info](https://themananshah.hashnode.dev/tweetapp)
+[check Blog for more info](https://themananshah.hashnode.dev/implementation-of-angularspring-boot-with-technology-stackelk-kafka-promotheus-using-docker-compose)
 
 ## Features
 >- The valid user can log in into the API and post the tweet, reply and like.
